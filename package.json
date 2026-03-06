@@ -1,0 +1,16 @@
+{
+  "name": "webmcp-demo",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n declarative,imperative -c cyan,magenta \"npm run dev -w packages/declarative\" \"npm run dev -w packages/imperative\"",
+    "dev:declarative": "npm run dev -w packages/declarative",
+    "dev:imperative": "npm run dev -w packages/imperative"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0",
+    "serve": "^14.0.0"
+  }
+}

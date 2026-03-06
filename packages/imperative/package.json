@@ -1,0 +1,7 @@
+{
+  "name": "imperative-webmcp",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "serve . --listen 3002 --no-clipboard"
+  }
+}

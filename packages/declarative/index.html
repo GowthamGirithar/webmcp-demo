@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebMCP — Declarative</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f5f5f5;
+      color: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #0057ff;
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.8rem;
+      border-radius: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.4rem; }
+
+    .subtitle {
+      color: #555;
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    /* --- How it works callout --- */
+    .explainer {
+      background: #eef3ff;
+      border-left: 4px solid #0057ff;
+      border-radius: 0.5rem;
+      padding: 1rem 1.25rem;
+      max-width: 560px;
+      width: 100%;
+      margin-bottom: 2rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+    .explainer strong { display: block; margin-bottom: 0.4rem; font-size: 0.9rem; }
+    .explainer code {
+      background: #d6e2ff;
+      padding: 0.1em 0.35em;
+      border-radius: 0.25rem;
+      font-size: 0.82rem;
+    }
+
+    /* --- Form card --- */
+    form {
+      background: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      max-width: 560px;
+      width: 100%;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+    }
+
+    fieldset {
+      border: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    label .hint {
+      font-weight: 400;
+      font-size: 0.78rem;
+      color: #888;
+      font-family: monospace;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: 1.5px solid #ddd;
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: border-color 0.15s;
+      background: #fafafa;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #0057ff;
+      background: white;
+    }
+    textarea { min-height: 100px; resize: vertical; }
+
+    button[type="submit"] {
+      margin-top: 0.5rem;
+      width: 100%;
+      padding: 0.75rem;
+      background: #0057ff;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    button[type="submit"]:hover { background: #0041cc; }
+
+    /* --- Confirmation --- */
+    .confirmation {
+      display: none;
+      background: #e6f9f0;
+      border: 1.5px solid #34c37a;
+      border-radius: 0.75rem;
+      padding: 1.25rem 1.5rem;
+      max-width: 560px;
+      width: 100%;
+      margin-top: 1.5rem;
+    }
+    .confirmation.show { display: block; }
+    .confirmation h2 { color: #1a8a4a; margin-bottom: 0.5rem; }
+    .confirmation p  { font-size: 0.95rem; color: #2d6a4a; }
+
+    /* --- Submitted entries log --- */
+    .log {
+      max-width: 560px;
+      width: 100%;
+      margin-top: 1.5rem;
+    }
+    .log h3 { font-size: 1rem; margin-bottom: 0.75rem; color: #555; }
+    .log-entry {
+      background: white;
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem;
+      border: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .log-entry .stars { color: #f5a623; font-size: 1rem; white-space: nowrap; }
+  </style>
+</head>
+<body>
+
+  <span class="badge">Declarative WebMCP</span>
+  <h1>Product Feedback</h1>
+  <p class="subtitle">Tools are defined by HTML attributes on the form — no JavaScript required.</p>
+
+  <div class="explainer">
+    <strong>How the declarative API works</strong>
+    The browser reads <code>toolname</code> and <code>tooldescription</code> on the
+    <code>&lt;form&gt;</code>, and <code>toolparamdescription</code> on each
+    <code>&lt;input&gt;</code> / <code>&lt;select&gt;</code> / <code>&lt;textarea&gt;</code>.
+    From those attributes it builds a structured tool that AI agents can call directly —
+    no JavaScript registration needed.
+  </div>
+
+  <!--
+    ╔══════════════════════════════════════════════════════════╗
+    ║  WebMCP DECLARATIVE — the tool is defined right here     ║
+    ║  in plain HTML attributes.                               ║
+    ╚══════════════════════════════════════════════════════════╝
+  -->
+  <form
+    id="feedbackForm"
+    toolname="submit_product_feedback"
+    tooldescription="Submit a product feedback entry with the customer name, email, a written message, and a numeric rating from 1 (poor) to 5 (excellent)."
+  >
+    <fieldset>
+
+      <label>
+        Your name
+        <span class="hint">toolparamdescription → "Customer full name (min 2 characters)"</span>
+        <input
+          type="text"
+          name="name"
+          required
+          minlength="2"
+          placeholder="Jane Smith"
+          toolparamdescription="Customer full name (min 2 characters)"
+        />
+      </label>
+
+      <label>
+        Email address
+        <span class="hint">toolparamdescription → "Contact email — optional but recommended"</span>
+        <input
+          type="email"
+          name="email"
+          placeholder="jane@example.com"
+          toolparamdescription="Contact email — optional but recommended"
+        />
+      </label>
+
+      <label>
+        Feedback message
+        <span class="hint">toolparamdescription → "Detailed feedback text (min 10 characters)"</span>
+        <textarea
+          name="message"
+          required
+          minlength="10"
+          placeholder="Tell us what you think…"
+          toolparamdescription="Detailed feedback text (min 10 characters)"
+        ></textarea>
+      </label>
+
+      <label>
+        Rating
+        <span class="hint">toolparamdescription → "Numeric rating: 1 = Poor, 5 = Excellent"</span>
+        <select
+          name="rating"
+          required
+          toolparamdescription="Numeric rating: 1 = Poor, 5 = Excellent"
+        >
+          <option value="">Select a rating…</option>
+          <option value="1">1 — Poor</option>
+          <option value="2">2 — Fair</option>
+          <option value="3">3 — Good</option>
+          <option value="4">4 — Very Good</option>
+          <option value="5">5 — Excellent</option>
+        </select>
+      </label>
+
+      <button type="submit">Submit Feedback</button>
+    </fieldset>
+  </form>
+
+  <div class="confirmation" id="confirmation">
+    <h2>Thank you!</h2>
+    <p id="confirmationText"></p>
+  </div>
+
+  <div class="log" id="logContainer" style="display:none">
+    <h3>Submitted entries</h3>
+    <div id="logList"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('feedbackForm');
+    const confirmation = document.getElementById('confirmation');
+    const confirmationText = document.getElementById('confirmationText');
+    const logContainer = document.getElementById('logContainer');
+    const logList = document.getElementById('logList');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const name    = data.get('name');
+      const email   = data.get('email') || 'not provided';
+      const message = data.get('message');
+      const rating  = Number(data.get('rating'));
+
+      // Show confirmation
+      confirmationText.textContent =
+        `Feedback from ${name} (${email}) — rated ${rating}/5 — received.`;
+      confirmation.classList.add('show');
+
+      // Append to log
+      const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.innerHTML = `
+        <div>
+          <strong>${name}</strong><br>
+          <span style="color:#555">${message}</span>
+        </div>
+        <span class="stars">${stars}</span>
+      `;
+      logList.prepend(entry);
+      logContainer.style.display = 'block';
+
+      form.reset();
+      setTimeout(() => confirmation.classList.remove('show'), 4000);
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+{
+  "name": "declarative-webmcp",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "serve . --listen 3001 --no-clipboard"
+  }
+}

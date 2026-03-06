@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebMCP — Imperative</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f5f5f5;
+      color: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #7c3aed;
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.8rem;
+      border-radius: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.4rem; }
+
+    .subtitle {
+      color: #555;
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+      text-align: center;
+    }
+
+    /* --- MCP status pill --- */
+    .status-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.75rem;
+      border-radius: 2rem;
+      margin-bottom: 1.75rem;
+    }
+    .status-badge.active   { background: #d1fae5; color: #065f46; }
+    .status-badge.inactive { background: #fee2e2; color: #991b1b; }
+
+    /* --- Explainer --- */
+    .explainer {
+      background: #f3eeff;
+      border-left: 4px solid #7c3aed;
+      border-radius: 0.5rem;
+      padding: 1rem 1.25rem;
+      max-width: 600px;
+      width: 100%;
+      margin-bottom: 2rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+    .explainer strong { display: block; margin-bottom: 0.4rem; font-size: 0.9rem; }
+    .explainer code {
+      background: #e5d9ff;
+      padding: 0.1em 0.35em;
+      border-radius: 0.25rem;
+      font-size: 0.82rem;
+    }
+
+    /* --- Add form card --- */
+    .card {
+      background: white;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      margin-bottom: 1.5rem;
+    }
+    .card h2 { font-size: 1rem; margin-bottom: 1rem; color: #333; }
+
+    #addForm { display: flex; flex-direction: column; gap: 0.75rem; }
+
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: 1.5px solid #ddd;
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: #fafafa;
+      transition: border-color 0.15s;
+    }
+    input[type="text"]:focus, textarea:focus {
+      outline: none;
+      border-color: #7c3aed;
+      background: white;
+    }
+    textarea { min-height: 80px; resize: vertical; }
+
+    .form-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .btn-primary {
+      flex: 1;
+      padding: 0.7rem;
+      background: #7c3aed;
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: #6d28d9; }
+
+    .btn-secondary {
+      padding: 0.7rem 1rem;
+      background: white;
+      color: #7c3aed;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: 1.5px solid #7c3aed;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-secondary:hover { background: #f3eeff; }
+
+    /* --- Notes list --- */
+    #notesList {
+      list-style: none;
+      max-width: 600px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .note-item {
+      background: white;
+      border-radius: 0.75rem;
+      padding: 1rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      border: 1px solid #eee;
+    }
+
+    .note-content { flex: 1; min-width: 0; }
+    .note-id { font-size: 0.72rem; color: #aaa; font-family: monospace; }
+    .note-title { display: block; font-size: 0.95rem; margin: 0.15rem 0 0.3rem; }
+    .note-body  { font-size: 0.88rem; color: #555; margin-bottom: 0.4rem; word-break: break-word; }
+    .note-date  { font-size: 0.75rem; color: #bbb; }
+
+    .delete-btn {
+      padding: 0.35rem 0.75rem;
+      border: 1.5px solid #e5e7eb;
+      background: white;
+      border-radius: 0.4rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: #888;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .delete-btn:hover { border-color: #ef4444; color: #ef4444; }
+
+    .empty {
+      color: #aaa;
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 2rem 0;
+    }
+
+    /* --- Tools panel --- */
+    .tools-panel {
+      background: white;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      margin-top: 1.5rem;
+    }
+    .tools-panel h2 { font-size: 1rem; margin-bottom: 1rem; color: #333; }
+
+    .tool-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+    .tool-item {
+      background: #fafafa;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 0.6rem 0.85rem;
+      font-size: 0.85rem;
+    }
+    .tool-item code {
+      background: #e5d9ff;
+      padding: 0.1em 0.35em;
+      border-radius: 0.25rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .tool-item p { color: #666; margin-top: 0.2rem; font-size: 0.8rem; }
+
+    /* --- Toast --- */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(4rem);
+      background: #1a1a1a;
+      color: white;
+      padding: 0.65rem 1.25rem;
+      border-radius: 2rem;
+      font-size: 0.88rem;
+      opacity: 0;
+      transition: all 0.25s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .toast.success { background: #065f46; }
+    .toast.agent   { background: #5b21b6; }
+    .toast.info    { background: #1d4ed8; }
+  </style>
+</head>
+<body>
+
+  <span class="badge">Imperative WebMCP</span>
+  <h1>Notes App</h1>
+  <p class="subtitle">Tools are registered via JavaScript — <code>navigator.modelContext.registerTool()</code></p>
+  <span id="mcpStatus" class="status-badge">Checking…</span>
+
+  <div class="explainer">
+    <strong>How the imperative API works</strong>
+    Each tool is registered explicitly in <code>script.js</code> by calling
+    <code>navigator.modelContext.registerTool(&#123; name, description, inputSchema, execute &#125;)</code>.
+    The <code>execute</code> function runs in the page when an AI agent invokes the tool,
+    with full access to page state — here, the in-memory notes map.
+  </div>
+
+  <!-- Add note form -->
+  <div class="card">
+    <h2>Add a note</h2>
+    <form id="addForm">
+      <input type="text" id="titleInput" placeholder="Title…" required />
+      <textarea id="bodyInput" placeholder="Write your note…" required></textarea>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Add Note</button>
+        <button type="button" id="clearBtn" class="btn-secondary">Clear All</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Notes list -->
+  <ul id="notesList"></ul>
+
+  <!-- Registered tools reference panel -->
+  <div class="tools-panel">
+    <h2>Registered WebMCP tools <span style="font-weight:400;color:#aaa">(from script.js)</span></h2>
+    <div class="tool-list">
+      <div class="tool-item">
+        <code>add_note</code>
+        <p>Add a new note · params: <strong>title</strong> (string), <strong>body</strong> (string)</p>
+      </div>
+      <div class="tool-item">
+        <code>list_notes</code>
+        <p>Return all notes as formatted text · no params</p>
+      </div>
+      <div class="tool-item">
+        <code>delete_note</code>
+        <p>Delete a note by ID · params: <strong>id</strong> (number)</p>
+      </div>
+      <div class="tool-item">
+        <code>clear_notes</code>
+        <p>Delete every note at once · no params</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
