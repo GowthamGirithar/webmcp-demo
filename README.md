@@ -1,6 +1,6 @@
 # webmcp-demo
 
-A monorepo for exploring MCP and WebMCP concepts with simple, easy-to-understand demos.
+WebMCP concepts with simple, easy-to-understand demos. AI generated code for understanding.
 
 ---
 
@@ -39,6 +39,21 @@ npm run dev:imperative   # http://localhost:3002
 
 > **Requirement:** Use Chrome with the WebMCP flag enabled.
 > Open `chrome://flags`, search for **WebMCP**, and enable it.
+
+## How to test this
+
+1. Install **Chrome Canary** 
+2. Go to chrome://flags/ and then enable the **WebMCP for testing**
+3. Install extension - **WebMCP - Model Context Tool Inspection**
+4. Set the Google API for the agent - at the time of testing it was still in development phase
+   https://aistudio.google.com/api-keys and generate the API Key
+
+## Testing samples
+
+![img.png](images/img.png)
+![img_2.png](images/img_2.png)
+![img_3.png](images/img_3.png)
+![img_4.png](images/img_4.png)
 
 ---
 
@@ -129,17 +144,4 @@ Best for dynamic, stateful interactions — when tools need to read or modify in
 | Best for | Simple form submissions | Dynamic, stateful workflows |
 | Boilerplate | Minimal | Explicit per tool |
 
-## How to test this
 
-1. Install **Chrome Canary** 
-2. Go to chrome://flags/ and then enable the **WebMCP for testing**
-3. Install extension - **WebMCP - Model Context Tool Inspection**
-4. Set the Google API for the agent - at the time of testing it was still in development phase
-   https://aistudio.google.com/api-keys and generate the API Key
-
-## Testing samples
-
-![img.png](images/img.png)
-![img_2.png](images/img_2.png)
-![img_3.png](images/img_3.png)
-![img_4.png](images/img_4.png)
